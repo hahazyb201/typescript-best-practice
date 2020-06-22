@@ -61,3 +61,37 @@ let strValue: string = 'welcome';
 ### 使用arrow function
 arrow function可以自动推导出this
 
+### redux store
+当我们在typescript项目中使用redux store的时候，我们需要考虑如何组织redux的reducer，state，action等文件。一种我认为比较好的结构是对action进行分类。比如我们要写一个淘宝页面，它会有不同类型的action，比如验证API，用户信息API，搜索API等等，并且他们返回的结果会被存在redux state中。
+```plain
+/path/to/project
+├── src
+    ├── store
+         ├── authentication
+              ├── actions.ts
+              ├── reducer.ts
+              ├── state.ts
+              ├── constants.ts
+         ├── userInfo
+         ├── searchProduct
+         ├── store.ts
+
+```
+正如上面的文件结构，redux action按照其功能分类，并有各自的reducer和state，然后有一个总的store.ts，汇总所有reducer的值，供project下的所有文件使用。
+对于诸如API call这样的异步action，包含有promise，我们需要使用在redux store中使用promiseMiddleware，这样就可以统一同步action和异步action。
+
+### Opaque Types
+在项目的很多函数之中，我们会用到string类型的变量，但typescript却无法区别这些变量的类型，因为他们都是string。可能导致的错误就是我们放错了参数，但由于都是string，typescript却不能报错。这里我们可以定义opaque type来区别这些string。例如
+```
+type Opaque<K, T> = T & { __TYPE__: K };
+type serviceName = Opaque<"service", string>;
+type inputARN = Opaque<"ARN", string>;
+
+const validateARN = (service: serviceName, arn: inputARN) => { /*some validation logic*/ }
+const service = getServiceName() as serviceName;
+const arn = getARNfromInputBox() as inputARN;
+
+validateARN(arn, service);
+// Your IDE now throw an error
+```
+
