@@ -95,3 +95,19 @@ validateARN(arn, service);
 // Your IDE now throw an error
 ```
 
+### Double negation
+一个在javascript、typescript中经常被使用的‘trick’就是！！， 用起来很省事。可以将不同类型的变量都变为boolean。例如：
+```
+!!0 // false
+!!{ Name: 'Guillaume' } // true
+!!true // true
+!!undefined // false
+!!'' // false
+!!'Guillaume' // true
+```
+这种用法虽然十分方便，可以用来进行type conversion，但是有损于代码的可读性，建议使用更清晰语义的代码，如
+如果name变量不为undefined且长度不为零
+```
+if (!!name) { ... } // poor practice
+if (name !== undefined && name.length > 0) // good
+```
